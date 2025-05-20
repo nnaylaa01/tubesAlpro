@@ -1,0 +1,97 @@
+package main
+
+import "fmt"
+
+const nMAX = 20
+
+type tabPolusi [nMAX]Polusi
+
+type Polusi struct {
+	lokasi        string
+	tingkatPolusi float64
+	sumber        string
+	waktu         int
+}
+
+func bacaData(A *tabPolusi, n *int) {
+	var i int
+	fmt.Scan(n)
+	for i = 0; i < *n; i++ {
+		fmt.Scan(&A[i].lokasi, &A[i].tingkatPolusi, &A[i].sumber, &A[i].waktu)
+	}
+}
+
+func cetakData(A *tabPolusi, n int) {
+	var i int
+	fmt.Printf("%-20s %-10s %-20s %-5s \n", "Lokasi", "idx Polusi", "Sumber", "Waktu")
+	for i = 0; i < n; i++ {
+		fmt.Printf("%-20s %-10.1f %-20s %-5d \n", A[i].lokasi, A[i].tingkatPolusi, A[i].sumber, A[i].waktu)
+	}
+}
+
+func menurunWaktu(A *tabPolusi, n int) {
+	var pass, i, idx int
+	var temp Polusi
+	for pass = 1; pass < n-1; pass++ {
+		idx = pass - 1
+		for i = pass; i < n; i++ {
+			if A[i].waktu > A[idx].waktu {
+				idx = i
+			}
+			temp = A[pass-1]
+			A[pass-1] = A[idx]
+			A[idx] = temp
+		}
+	}
+}
+
+func menurunAqi(A *tabPolusi, n int) {
+	var pass, i, idx int
+	var temp Polusi
+	for pass = 1; pass < n-1; pass++ {
+		idx = pass - 1
+		for i = pass; i < n; i++ {
+			if A[i].tingkatPolusi > A[idx].tingkatPolusi {
+				idx = i
+			}
+			temp = A[pass-1]
+			A[pass-1] = A[idx]
+			A[idx] = temp
+		}
+	}
+}
+
+func kategoriPolusi(idxPolusi float64) string {
+	if idxPolusi <= 2.0 {
+		return "Baik"
+	} else if idxPolusi <= 5.0 {
+		return "Sedang"
+	} else if idxPolusi <= 8.0 {
+		return "Tidak sehat"
+	} else {
+		return "Berbahaya"
+	}
+}
+
+func main() {
+	var polusi tabPolusi
+	var nPolusi int
+
+	fmt.Println("Selamat Datang di Aplikasi Manajemen dan Pemantauan Polusi Udara Lokal: ")
+	fmt.Println("1. Input Data")
+	fmt.Println("2. Mencari Data")
+	fmt.Println("3. Mengurutkan Data")
+	fmt.Println("4. Out")
+
+	bacaData(&polusi, &nPolusi)
+
+	fmt.Println("\n Urutan berdasarkan waktu terbaru: ")
+	menurunWaktu(&polusi, nPolusi)
+	cetakData(&polusi, nPolusi)
+
+	fmt.Println("\n Urutan berdasarkan tingkat polusi: ")
+	menurunAqi(&polusi, nPolusi)
+	cetakData(&polusi, nPolusi)
+
+	fmt.Println()
+}
